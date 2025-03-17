@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile Frame Generator</title>
+<style>
+body {
+text-align: center;
+font-family: Arial, sans-serif;
+}
+canvas {
+border: 1px solid black;
+max-width: 100%;
+}
+</style>
+</head>
+<body>
+<h2>Upload Your Photo</h2>
+<input type="file" id="upload" accept="image/*">
+<br><br>
+<canvas id="canvas"></canvas>
+<br><br>
+<button id="download">Download Framed Photo</button>
+
+<script>
+const frameSrc = 'frame.png'; // Your frame image
+const upload = document.getElementById('upload');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const download = document.getElementById('download');
+
+upload.addEventListener('change', function(event) {
+const file = event.target.files[0];
+if (!file) return;
+
+const reader = new FileReader();
+reader.onload = function(e) {
+const userImg = new Image();
+userImg.onload = function() {
+const frame = new Image();
+frame.src = frameSrc;
+frame.onload = function() {
+canvas.width = frame.width;
+canvas.height = frame.height;
+ctx.drawImage(userImg, 50, 50, frame.width - 100, frame.height - 100); 
+ctx.drawImage(frame, 0, 0, frame.width, frame.height);
+};
+};
+userImg.src = e.target.result;
+};
+reader.readAsDataURL(file);
+});
+
+download.addEventListener('click', function() {
+const link = document.createElement('a');
+link.download = 'framed-photo.png';
+link.href = canvas.toDataURL();
+link.click();
+});
+</script>
+</body>
+</html>
